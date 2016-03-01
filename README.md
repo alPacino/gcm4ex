@@ -82,9 +82,9 @@ From here and now you can start pushing your PNs via GCM.push/2 and GCM.push/3:
 message = GCM.Message.new
 message = message
 |> Map.put(:token, "0000000000000000000000000000000000000000000000000000000000000000")
-|> Map.put(:alert, "Hello world!")
+|> Map.put(:notification, "Hello world!")
 |> Map.put(:badge, 42)
-|> Map.put(:extra, %{
+|> Map.put(:data, %{
   "var1" => "val1",
   "var2" => "val2"
 })
@@ -105,15 +105,9 @@ You can define callback handler module via config param `callback_module`, the m
 ```elixir
 defstruct [
   id: nil,
-  expiry: 86400000,
   token: "",
-  content_available: nil,
-  alert: "",
-  badge: nil,
-  sound: "default",
-  priority: 10,
-  extra: [],
-  support_old_ios: nil
+  notification: "",
+  data: []
 ]
 ```
 - %GCM.Error{}
@@ -139,8 +133,8 @@ defstruct [
   title_loc_key: nil,
   title_loc_args: nil,
   action_loc_key: nil,
-  loc_key: "",
-  loc_args: [],
+  body_loc_key: "",
+  body_loc_args: [],
   launch_image: nil
 ]
 ```

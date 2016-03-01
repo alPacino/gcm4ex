@@ -1,16 +1,10 @@
 defmodule GCM.Message do
   defstruct [
     id: nil,
-    category: nil,
-    expiry: 86400000,
+    topic: nil,
     token: "",
-    content_available: nil,
-    alert: "",
-    badge: nil,
-    sound: "default",
-    priority: 10,
-    extra: [],
-    support_old_ios: nil
+    notification: "",
+    data: [],
   ]
 
   def new do
@@ -27,8 +21,8 @@ defmodule GCM.Message do
       title_loc_key: nil,
       title_loc_args: nil,
       action_loc_key: nil,
-      loc_key: "",
-      loc_args: [],
+      body_loc_key: "",
+      body_loc_args: [],
       launch_image: nil
     ]
   end

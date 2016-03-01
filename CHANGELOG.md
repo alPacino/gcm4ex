@@ -3,7 +3,7 @@
 ## 0.0.11 (2016-01-04)
 
 * Fixed Loc-messages formating/truncating
-* (optional) category field added to GCM message
+* (optional) topic field added to GCM message
 * cert_password can be given in both "binary" and 'char list' formats
 * Now you can dynamically add workers to pool with GCM.connect_pool/2
 * `cert: "plaintext certfile contents"` and `key: "plaintext keyfile contents"` options can be provided instead of `cert: "path/to/certfile"` and `keyfile: "path/to/keyfile"`
@@ -33,11 +33,11 @@
 ## 0.0.6 (2015-10-14)
 
 * In case when token size is incorrect (!= 64), error callback will be triggered
-* In case when payload size is too big and can't be adjusted by truncating alert, error callback will be triggered
+* In case when payload size is too big and can't be adjusted by truncating notification, error callback will be triggered
 
 ## 0.0.5 (2015-10-5)
 
-* Localized alerts are now supported
+* Localized notifications are now supported
 
 ## 0.0.4 (2015-9-12)
 

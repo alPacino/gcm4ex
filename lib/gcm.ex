@@ -2,9 +2,11 @@ defmodule GCM do
   use Application
 
   def push(pool, token, notification) do
-    msg = GCM.Message.new
-    |> Map.put(:token, token)
-    |> Map.put(:notification, notification)
+    msg =
+      GCM.Message.new
+      |> Map.put(:token, token)
+      |> Map.put(:notification, notification)
+
     push(pool, msg)
   end
 

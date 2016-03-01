@@ -4,16 +4,16 @@ defmodule GCM.Mixfile do
   def project do
     [
       app: :gcm,
-      version: "0.0.11",
+      version: "0.0.1",
       elixir: "~> 1.0",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps,
       package: package,
       name: "gcm4ex",
-      source_url: "https://github.com/chvanikoff/gcm4ex",
+      source_url: "https://github.com/elabs/gcm4ex",
       description: """
-      GCM (Apple Push Notification Service) library for Elixir
+      GCM (Google Cloud Messaging) library for Elixir
       """
     ]
   end
@@ -21,9 +21,8 @@ defmodule GCM.Mixfile do
   def application do
     [applications: [
       :logger,
-      :public_key,
-      :ssl,
       :poison,
+      :httpoison,
       :poolboy
     ],
     mod: {GCM, []}]
@@ -32,15 +31,16 @@ defmodule GCM.Mixfile do
   defp deps do
     [
       {:poison, "~> 1.5"},
+      {:httpoison, "~> 0.8.0"},
       {:poolboy, "~> 1.5"}
     ]
   end
 
   defp package do
     [
-      maintainers: ["Roman Chvanikov"],
+      maintainers: ["Nicklas Ramhöj"],
       licenses: ["MIT"],
-      links: %{github: "https://github.com/chvanikoff/gcm4ex"}
+      links: %{github: "https://github.com/elabs/gcm4ex"}
     ]
   end
 end

@@ -1,7 +1,6 @@
 use Mix.Config
 
 config :gcm,
-  timeout: 30,
   pools: [
     dev_pool: [
       env: :dev,

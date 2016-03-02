@@ -1,5 +1,9 @@
 use Mix.Config
 
+config :logger,
+  backends: [:console],
+  level: :info
+
 config :gcm,
   pools: [
     dev_pool: [

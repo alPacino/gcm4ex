@@ -1,7 +1,5 @@
 defmodule GCMTest do
   use ExUnit.Case
-  require Logger
-  doctest GCM
 
   test "GCM starts all the pools from config" do
     for {pool, _conf} <- Application.get_env(:gcm, :pools) do

@@ -3,6 +3,8 @@
 The library was inspired by [apns4ex](https://github.com/chvanikoff/apns4ex) and
 much of the source code has been used as a bootstrap for this lib.
 
+The HTTP wrapper has been heavily inspired by [carnivalmobile/gcm](https://github.com/carnivalmobile/gcm).
+
 ## Warning
 
 This library is a work in progress and it's API is subject to change till `v0.1`, please consider use of `== ver` operator rather than `~> ver` when requiring `gcm4ex` as a dependency or your application may be broken with next release of the library.

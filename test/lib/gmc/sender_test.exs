@@ -182,7 +182,7 @@ defmodule GCM.SenderTest do
     expect(Poison, :encode!, [%{registration_ids: registration_ids}], "req_body")
     expect(HTTPoison, :post, ["https://gcm-http.googleapis.com/gcm/send", "req_body", expectations.headers], {:ok, http_response})
 
-    assert Sender.push("api_key", registration_ids) == {:error, :service_unavaiable}
+    assert Sender.push("api_key", registration_ids) == {:error, :service_unavailable}
     assert validate [Poison, HTTPoison]
   end
 

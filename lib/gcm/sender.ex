@@ -25,7 +25,7 @@ defmodule GCM.Sender do
 
   defp build_response(_, %Response{status_code: 400}), do: {:error, :bad_request}
   defp build_response(_, %Response{status_code: 401}), do: {:error, :unauthorized}
-  defp build_response(_, %Response{status_code: 503}), do: {:error, :service_unavaiable}
+  defp build_response(_, %Response{status_code: 503}), do: {:error, :service_unavailable}
   defp build_response(_, %Response{status_code: code}) when code in 500..599, do: {:error, :server_error}
   defp build_response(registration_ids, %Response{headers: headers, status_code: 200, body: body}) do
     response = Poison.decode!(body)

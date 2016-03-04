@@ -15,11 +15,15 @@ defmodule GCM.Sender do
       ids -> %{registration_ids: ids}
     end |> Dict.merge(options) |> Poison.encode!
 
-    Logger.info(["POST", url, "\nbody:", inspect(body), "\nheaders:", inspect(headers(api_key))])
+    request_info = ["[POST", url, "\nbody:", inspect(body), "\nheaders:", inspect(headers(api_key))]
 
     case HTTPoison.post(url, body, headers(api_key)) do
-      {:ok, response} -> build_response(registration_ids, response)
-      error -> error
+      {:ok, response} ->
+        Logger.debug(["[GCM] success", inspect(response), inspect(request_info)])
+        build_response(registration_ids, response)
+      error ->
+        Logger.error(["[GCM] failure", inspect(error), inspect(request_info)])
+        error
     end
   end
 

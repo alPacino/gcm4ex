@@ -4,7 +4,7 @@ defmodule GCM.WorkerTest do
   @moduletag :capture_log
 
   setup do
-    pool_conf = [env: :dev, key: "some_gcm_api_key", pool_size: 10, pool_max_overflow: 5]
+    pool_conf = [key: "some_gcm_api_key", pool_size: 10, pool_max_overflow: 5]
     {:ok, pid} = GCM.Worker.start_link(pool_conf)
     {:ok, pid: pid}
   end

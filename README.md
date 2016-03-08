@@ -14,7 +14,7 @@ This library is a work in progress and it's API is subject to change till `v0.1`
   1. Add gcm to your list of dependencies in mix.exs:
 
         def deps do
-          [{:gcm, "== 0.0.1"}]
+          [{:gcm, "== 0.0.2"}]
         end
 
   2. Ensure gcm is started before your application:
@@ -34,14 +34,12 @@ config :gcm,
   pools: [
     # app1_dev_pool is the pool_name
     app1_dev_pool: [
-      env: :dev,
       pool_size: 10,
       pool_max_overflow: 5,
       # and this is overwritten config key
       key: "my gcm api key"
     ],
     app1_prod_pool: [
-      env: :prod,
       key: "my gcm api key"
       pool_size: 100,
       pool_max_overflow: 50
@@ -60,12 +58,11 @@ config :gcm,
 
 ### Pool keys
 
-| Pool key          | Description                                                                  |
-|:------------------|:-----------------------------------------------------------------------------|
-| env               | :dev for Apple sandbox push server or :prod for Apple production push server |
-| key               | GCM API key                                                                  |
-| pool_size         | Maximum pool size                                                            |
-| pool_max_overflow | Maximum number of workers created if pool is empty                           |
+| Pool key          | Description                                        |
+|:------------------|:---------------------------------------------------|
+| key               | GCM API key                                        |
+| pool_size         | Maximum pool size                                  |
+| pool_max_overflow | Maximum number of workers created if pool is empty |
 
 All pools defined in config will be started automatically
 

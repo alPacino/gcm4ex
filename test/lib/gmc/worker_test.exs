@@ -10,10 +10,7 @@ defmodule GCM.WorkerTest do
   end
 
   test "worked handles call", %{pid: pid} do
-    message = %GCM.Message{
-      notification: %GCM.Message.Loc{body: "goal!"},
-      token: "gcm-device-token"
-    }
-    assert GenServer.call(pid, message) == :ok
+    message = %GCM.Message{notification: %GCM.Message.Loc{body: "goal!"}}
+    assert GenServer.call(pid, %{message: message, registration_ids: ["someregid"]}) == :ok
   end
 end

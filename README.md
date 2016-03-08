@@ -30,6 +30,7 @@ Config the GCM app and define pools
 ```elixir
 config :gcm,
   # Here are pools configs. Any value from "global" config can be overwritten in any single pool config
+  batch_size: 1000,
   pools: [
     # app1_dev_pool is the pool_name
     app1_dev_pool: [
@@ -50,9 +51,12 @@ config :gcm,
 
 ### Config keys
 
-| Name  | Default value | Description            |
-|:------|:--------------|:-----------------------|
-| pools | []            | List of pools to start |
+| Name       | Default value | Description                                                     |
+|:-----------|:--------------|:----------------------------------------------------------------|
+| pools      | []            | List of pools to start                                          |
+| batch_size | 1000          | Number of registration ids to send with each multicast request* |
+
+* Google do not allow more than 1000 registration ids to be sent in the same request!
 
 ### Pool keys
 

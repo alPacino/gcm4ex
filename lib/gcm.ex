@@ -1,18 +1,9 @@
 defmodule GCM do
   use Application
 
-  def push(pool, token, notification) do
-    msg =
-      GCM.Message.new
-      |> Map.put(:token, token)
-      |> Map.put(:notification, notification)
-
-    push(pool, msg)
-  end
-
-  def push(pool, %GCM.Message{} = msg) do
+  def push(pool, %GCM.Message{} = message, registration_ids) do
     :poolboy.transaction(pool_name(pool), fn(pid) ->
-      GenServer.call(pid, msg)
+      GenServer.call(pid, %{message: message, registration_ids: registration_ids})
     end)
   end
 

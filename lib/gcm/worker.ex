@@ -10,8 +10,8 @@ defmodule GCM.Worker do
     GenServer.start_link(__MODULE__, state, [])
   end
 
-  def handle_call(%GCM.Message{token: registration_id} = message, _from, %{config: config, counter: counter} = state) do
-    send_message(config, registration_id, message)
+  def handle_call(%{message: %GCM.Message{} = message, registration_ids: registration_ids}, _from, %{config: config, counter: counter} = state) do
+    send_message(config, registration_ids, message)
     {:reply, :ok, %{state | counter: counter + 1}}
   end
 

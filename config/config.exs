@@ -5,6 +5,7 @@ config :logger,
   level: :info
 
 config :gcm,
+  batch_size: 1000,
   pools: [
     dev_pool: [
       env: :dev,
@@ -19,3 +20,7 @@ config :gcm,
       pool_max_overflow: 50
     ]
   ]
+
+if Mix.env == :test do
+  import_config "test.exs"
+end

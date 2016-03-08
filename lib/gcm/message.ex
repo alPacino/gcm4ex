@@ -2,7 +2,6 @@ defmodule GCM.Message do
   defstruct [
     id: nil,
     topic: nil,
-    token: "",
     notification: "",
     data: [],
   ]

@@ -11,28 +11,40 @@ defmodule GCM.Sender do
 
   def push(api_key, registration_ids, payload \\ %{}, http_module \\ HTTPoison) do
     registration_ids = List.wrap(registration_ids)
+    headers = headers(api_key)
 
     Enum.map(Enum.chunk(registration_ids, @batch_size, @batch_size, []), fn (registration_ids_chunk) ->
-      send_request(registration_ids_chunk, api_key, payload, http_module)
+      send_request(registration_ids_chunk, headers, payload, http_module)
     end)
   end
 
-  defp send_request(registration_ids, api_key, payload, http_module) do
+  defp send_request(registration_ids, headers, payload, http_module) do
     body = case registration_ids do
       [id] -> %{to: id}
       ids -> %{registration_ids: ids}
-    end |> Dict.merge(payload) |> Poison.encode!
+    end |> Dict.merge(payload)
 
-    request_info = ["[POST", @url, "\nbody:", inspect(body), "\nheaders:", inspect(headers(api_key))]
-
-    case http_module.post(@url, body, headers(api_key)) do
+    case http_module.post(@url, Poison.encode!(body), headers) do
       {:ok, response} ->
-        Logger.debug(["[GCM] success", inspect(response), inspect(request_info)])
-        build_response(registration_ids, response)
-      error ->
-        Logger.error(["[GCM] failure", inspect(error), inspect(request_info)])
-        error
+        case build_response(registration_ids, response) do
+          {:ok, response} ->
+            handle_success(request: %{url: @url, body: body, headers: headers}, response: response)
+          {:error, reason} ->
+            handle_error(request: %{url: @url, body: body, headers: headers}, reason: reason)
+        end
+      {:error, reason} ->
+        handle_error(request: %{url: @url, body: body, headers: headers}, reason: reason)
     end
+  end
+
+  defp handle_error(request: request, reason: reason) do
+    GCM.Callbacks.ErrorHandler.handle(request: request, reason: reason)
+    {:error, reason}
+  end
+
+  defp handle_success(request: request, response: response) do
+    GCM.Callbacks.SuccessHandler.handle(request: request, response: response)
+    {:ok, response}
   end
 
   defp build_response(_, %Response{status_code: 400}), do: {:error, :bad_request}

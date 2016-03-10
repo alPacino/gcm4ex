@@ -3,10 +3,9 @@ defmodule GCM.SenderTest do
 
   import GCM.TestHelper
   import GCM.TestHelper.FakeHttpBase
+  import ExUnit.CaptureLog
 
   alias GCM.Sender
-
-  @moduletag :capture_log
 
   defmodule FakeHttpNoResult do
     def post(url, body, headers) do
@@ -123,5 +122,37 @@ defmodule GCM.SenderTest do
 
   test "push notification to GCM with a 504 response", %{payload: payload} do
     assert Sender.push("api_key", ["reg1"], payload, FakeHttp504) == [{:error, :server_error}]
+  end
+
+  test "logs successful unicast calls", %{payload: payload} do
+    output = capture_log(fn -> Sender.push("api_key", ["reg1"], payload, FakeHttp1Success) end)
+
+    assert output =~ ~s(key=api_key)
+    assert output =~ ~s(alert: "Push!")
+    assert output =~ ~s(\\"success\\":1)
+    assert output =~ ~s(success: 1)
+    assert output =~ ~s(to: "reg1")
+  end
+
+  test "logs successful multicast calls", %{payload: payload} do
+    output = capture_log(fn -> Sender.push("api_key", ["reg1", "reg2"], payload, FakeHttp2Success) end)
+
+    assert output =~ ~s(sent to reg1)
+    assert output =~ ~s(sent to reg2)
+  end
+
+  test "logs failed unicast calls", %{payload: payload} do
+    output = capture_log(fn -> Sender.push("api_key", ["reg1"], payload, FakeHttp504) end)
+
+    assert output =~ ~s(reason: :server_error)
+    assert output =~ ~s(key=api_key)
+    assert output =~ ~s(to: "reg1")
+  end
+
+  test "logs failed multicast calls", %{payload: payload} do
+    output = capture_log(fn -> Sender.push("api_key", ["reg1", "reg2"], payload, FakeHttp504) end)
+
+    assert output =~ ~s(to send to reg1)
+    assert output =~ ~s(to send to reg2)
   end
 end

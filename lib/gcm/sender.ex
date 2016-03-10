@@ -9,19 +9,19 @@ defmodule GCM.Sender do
   @empty_results %{not_registered_ids: [], canonical_ids: [], invalid_registration_ids: []}
   @batch_size Application.get_env(:gcm, :batch_size) || 1000
 
-  def push(api_key, registration_ids, options \\ %{}, http_module \\ HTTPoison) do
+  def push(api_key, registration_ids, payload \\ %{}, http_module \\ HTTPoison) do
     registration_ids = List.wrap(registration_ids)
 
     Enum.map(Enum.chunk(registration_ids, @batch_size, @batch_size, []), fn (registration_ids_chunk) ->
-      send_request(registration_ids_chunk, api_key, options, http_module)
+      send_request(registration_ids_chunk, api_key, payload, http_module)
     end)
   end
 
-  defp send_request(registration_ids, api_key, options, http_module) do
+  defp send_request(registration_ids, api_key, payload, http_module) do
     body = case registration_ids do
       [id] -> %{to: id}
       ids -> %{registration_ids: ids}
-    end |> Dict.merge(options) |> Poison.encode!
+    end |> Dict.merge(payload) |> Poison.encode!
 
     request_info = ["[POST", @url, "\nbody:", inspect(body), "\nheaders:", inspect(headers(api_key))]
 

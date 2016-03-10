@@ -47,6 +47,8 @@ config :gcm,
   ]
 ```
 
+TODO: add callback module support to handle GCM feedback.
+
 ### Config keys
 
 | Name       | Default value | Description                                                     |
@@ -68,4 +70,83 @@ All pools defined in config will be started automatically
 
 From here and now you can start pushing your PNs via GCM.push/2 and GCM.push/3
 
-(TODO: Add usage here)
+## Basic Usage
+
+### Example using the notification payload:
+
+```elixir
+message =
+  GCM.Message.new
+  |> Map.put(:notification, %GCM.Message.Notification{title: "Hello world!"})
+  |> Map.put(:data, %{"post_id" => "23"})
+
+GCM.push(:app1_dev_pool, message)
+```
+
+### Example using the custom data structs:
+
+```elixir
+message = Map.put(GCM.Message.new, :data, %{"my-custom-key" => "Hello world!"})
+GCM.push(:app1_dev_pool, message)
+```
+
+### Send un-supervised one-off push messages
+
+The supervised, pooled `GCM.push\2` is probably what you want to use in your app
+but if you just want to play around with push messages from the console it can be
+convenient to use the bare `GCM.Sender.push` function:
+
+A successful push looks like this:
+
+```
+iex> GCM.Sender.push("api_key", ["registration_id1", "registration_id2"], %{notification: %{title: "Hello!"}})
+{:ok, %{
+  status_code: 200,
+  success: 2,
+  failure: 0,
+  body: "{}",
+  canonical_ids: [],
+  headers: [{"Content-Type", "application/json; charset=UTF-8"}, …],
+  invalid_registration_ids: [],
+  not_registered_ids: []
+}}
+```
+
+A successful push may have a list of `canonical_ids` which means that you **should** update your registration id to the `new` one.
+
+```
+iex> GCM.Sender.push(api_key, ["registration_id1", "registration_id2"])
+{:ok, %{
+  status_code: 200,
+  success: 2,
+  failure: 0,
+  body: "{}",
+  canonical_ids: [%{old: "registration_id1", new: "new_registration_id1"}],
+  headers: […],
+  invalid_registration_ids: [],
+  not_registered_ids: []
+}}
+```
+
+A partial successful push may have `not_registered_ids` and/or `invalid_registration_ids`.
+A "not registered id" is a registration id that was valid. According to GCM: "An existing registration token may cease to be valid in a number of scenarios..."
+
+An invalid registration is just wrong data.
+
+```
+iex> GCM.Sender.push(api_key, ["registration_id1", "registration_id2", "registration_id3"])
+{:ok, %{
+  status_code: 200,
+  success: 1,
+  failure: 2,
+  body: "{}",
+  canonical_ids: [],
+  headers: […],
+  invalid_registration_ids: ["registration_id2"],
+  not_registered_ids: ["registration_id1"]
+}}
+```
+
+If the push failed the return is `{:error, reason}` where reason will include more information on what failed.
+
+More info here: https://developers.google.com/cloud-messaging/http

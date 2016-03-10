@@ -8,6 +8,8 @@ defmodule GCM.Sender do
   @url @base_url <> "/send"
   @empty_results %{not_registered_ids: [], canonical_ids: [], invalid_registration_ids: []}
   @batch_size Application.get_env(:gcm, :batch_size) || 1000
+  @success_callback_module Application.get_env(:gcm, :success_callback_module) || GCM.Callbacks.SuccessHandler
+  @error_callback_module Application.get_env(:gcm, :error_callback_module) || GCM.Callbacks.ErrorHandler
 
   def push(api_key, registration_ids, payload \\ %{}, http_module \\ HTTPoison) do
     registration_ids = List.wrap(registration_ids)
@@ -37,14 +39,14 @@ defmodule GCM.Sender do
     end
   end
 
-  defp handle_error(request: request, reason: reason) do
-    GCM.Callbacks.ErrorHandler.handle(request: request, reason: reason)
-    {:error, reason}
+  defp handle_success(request: request, response: response) do
+    @success_callback_module.handle(request: request, response: response)
+    {:ok, response}
   end
 
-  defp handle_success(request: request, response: response) do
-    GCM.Callbacks.SuccessHandler.handle(request: request, response: response)
-    {:ok, response}
+  defp handle_error(request: request, reason: reason) do
+    @error_callback_module.handle(request: request, reason: reason)
+    {:error, reason}
   end
 
   defp build_response(_, %Response{status_code: 400}), do: {:error, :bad_request}

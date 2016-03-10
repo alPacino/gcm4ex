@@ -6,6 +6,8 @@ config :logger,
 
 config :gcm,
   batch_size: 1000,
+  success_callback_module: GCM.Callbacks.SuccessHandler,
+  error_callback_module: GCM.Callbacks.ErrorHandler,
   pools: [
     dev_pool: [
       env: :dev,

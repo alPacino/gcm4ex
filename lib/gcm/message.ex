@@ -1,7 +1,6 @@
 defmodule GCM.Message do
   defstruct [
     id: nil,
-    topic: nil,
     notification: "",
     data: [],
   ]

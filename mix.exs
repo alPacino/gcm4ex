@@ -32,14 +32,13 @@ defmodule GCM.Mixfile do
     [
       {:poison, "~> 1.5"},
       {:httpoison, "~> 0.8.0"},
-      {:poolboy, "~> 1.5"},
-      {:meck, "~> 0.8", only: :test}
+      {:poolboy, "~> 1.5"}
     ]
   end
 
   defp package do
     [
-      maintainers: ["Nicklas Ramhöj"],
+      maintainers: ["Linus Pettersson", "Nicklas Ramhöj"],
       licenses: ["MIT"],
       links: %{github: "https://github.com/elabs/gcm4ex"}
     ]

@@ -9,15 +9,15 @@ defmodule GCM.Sender do
   @empty_results %{not_registered_ids: [], canonical_ids: [], invalid_registration_ids: []}
   @batch_size Application.get_env(:gcm, :batch_size) || 1000
 
-  def push(api_key, registration_ids, options \\ %{}) do
+  def push(api_key, registration_ids, options \\ %{}, http_module \\ HTTPoison) do
     registration_ids = List.wrap(registration_ids)
 
     Enum.map(Enum.chunk(registration_ids, @batch_size, @batch_size, []), fn (registration_ids_chunk) ->
-      send_request(registration_ids_chunk, api_key, options)
+      send_request(registration_ids_chunk, api_key, options, http_module)
     end)
   end
 
-  defp send_request(registration_ids, api_key, options) do
+  defp send_request(registration_ids, api_key, options, http_module) do
     body = case registration_ids do
       [id] -> %{to: id}
       ids -> %{registration_ids: ids}
@@ -25,7 +25,7 @@ defmodule GCM.Sender do
 
     request_info = ["[POST", @url, "\nbody:", inspect(body), "\nheaders:", inspect(headers(api_key))]
 
-    case HTTPoison.post(@url, body, headers(api_key)) do
+    case http_module.post(@url, body, headers(api_key)) do
       {:ok, response} ->
         Logger.debug(["[GCM] success", inspect(response), inspect(request_info)])
         build_response(registration_ids, response)

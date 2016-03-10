@@ -1,7 +1,7 @@
 defmodule GCM.Message do
   defstruct [
     id: nil,
-    notification: "",
+    notification: nil,
     data: [],
   ]
 
@@ -13,7 +13,7 @@ defmodule GCM.Message do
     %__MODULE__{id: id}
   end
 
-  defmodule Loc do
+  defmodule Notification do
     defstruct [
       title: "",
       body: "",

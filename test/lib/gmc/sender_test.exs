@@ -70,28 +70,28 @@ defmodule GCM.SenderTest do
   end
 
   test "push splits multicast into multiple requests of batch size", %{payload: payload} do
-    response1 = expected_push_response(registration_ids: ["reg1", "reg2", "reg3"])
+    response1 = expected_push_response(registration_ids: ["reg1", "reg2", "reg3"], deletable_registration_ids: [])
     response2 = expected_push_response(to: "reg4")
     assert_push(Sender.push("api_key", ["reg1", "reg2", "reg3", "reg4"], payload, FakeHttpNoResult), [response1, response2])
   end
 
   test "push unicast notification to GCM with a 200 response", %{payload: payload} do
-    response = expected_push_response(success: 1, to: "reg1")
+    response = expected_push_response(success: 1, to: "reg1", deletable_registration_ids: [])
     assert_push(Sender.push("api_key", "reg1", payload, FakeHttp1Success), [response])
   end
 
   test "push notification to GCM with NotRegistered", %{payload: payload} do
-    response = expected_push_response(failure: 1, to: "reg1", not_registered_ids: ["reg1"])
+    response = expected_push_response(failure: 1, to: "reg1", not_registered_ids: ["reg1"], deletable_registration_ids: ["reg1"])
     assert_push(Sender.push("api_key", "reg1", payload, FakeHttp1FailureNotRegistered), [response])
   end
 
   test "push notification to GCM with InvalidRegistration", %{payload: payload} do
-    response = expected_push_response(failure: 1, to: "reg1", invalid_registration_ids: ["reg1"])
+    response = expected_push_response(failure: 1, to: "reg1", invalid_registration_ids: ["reg1"], deletable_registration_ids: ["reg1"])
     assert_push(Sender.push("api_key", "reg1", payload, FakeHttp1FailureInvalidRegistration), [response])
   end
 
   test "push notification to GCM with canonical ids", %{payload: payload} do
-    response = expected_push_response(success: 1, to: "reg1", canonical_ids: [%{old: "reg1", new: "newreg1"}])
+    response = expected_push_response(success: 1, to: "reg1", canonical_ids: [%{old: "reg1", new: "newreg1"}], deletable_registration_ids: [])
     assert_push(Sender.push("api_key", "reg1", payload, FakeHttp1SuccesCanonical), [response])
   end
 
@@ -103,7 +103,8 @@ defmodule GCM.SenderTest do
       failure: 2,
       not_registered_ids: ["not_reg"],
       invalid_registration_ids: ["invalid_reg"],
-      canonical_ids: [%{old: "old_reg", new: "new_reg"}]
+      canonical_ids: [%{old: "old_reg", new: "new_reg"}],
+      deletable_registration_ids: ["not_reg", "invalid_reg"]
     )
     assert_push(Sender.push("api_key", reg_ids, payload, FakeHttpMixed), [response])
   end

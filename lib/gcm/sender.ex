@@ -6,7 +6,7 @@ defmodule GCM.Sender do
 
   @base_url "https://gcm-http.googleapis.com/gcm"
   @url @base_url <> "/send"
-  @empty_results %{not_registered_ids: [], canonical_ids: [], invalid_registration_ids: []}
+  @empty_results %{not_registered_ids: [], canonical_ids: [], invalid_registration_ids: [], deletable_registration_ids: []}
   @batch_size Application.get_env(:gcm, :batch_size) || 1000
   @success_callback_module Application.get_env(:gcm, :success_callback_module) || GCM.Callbacks.SuccessHandler
   @error_callback_module Application.get_env(:gcm, :error_callback_module) || GCM.Callbacks.ErrorHandler
@@ -61,7 +61,8 @@ defmodule GCM.Sender do
       success: response["success"],
       body: body,
       headers: headers,
-      status_code: 200
+      status_code: 200,
+      deletable_registration_ids: results[:not_registered_ids] ++ results[:invalid_registration_ids]
     }
 
     {:ok, Map.merge(results, defaults)}

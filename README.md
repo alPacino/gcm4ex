@@ -58,7 +58,7 @@ config :gcm,
 | batch_size              | 1000                         | Number of registration ids to send with each multicast request** |
 | pools                   | []                           | List of pools to start                                           |
 
-* Google do not allow more than 1000 registration ids to be sent in the same request!
+\* Google do not allow more than 1000 registration ids to be sent in the same request!
 
 ### Pool keys
 
@@ -79,11 +79,31 @@ fine with the default `error_callback_module` but you'd want to write your own
 `success_callback_module`. It need to handle the following response keys by updating
 your database.
 
-| Name                     | Action | Example                            |
-|:-------------------------|:-------|:-----------------------------------|
-| canonical_ids            | update | [%{old: "reg1", new: "newreg1"}]   |
-| invalid_registration_ids | delete | invalid_registration_ids: ["reg1"] |
-| not_registered_ids       | delete | not_registered_ids: ["reg1"]       |
+| Name                        | Action | Example                                      |
+|:----------------------------|:-------|:---------------------------------------------|
+| canonical_ids               | update | [%{old: "reg1", new: "newreg1"}]             |
+| invalid_registration_ids    | delete | invalid_registration_ids: ["reg2"]           |
+| not_registered_ids          | delete | not_registered_ids: ["reg3"]                 |
+| deletable_registration_ids* | delete | deletable_registration_ids: ["reg2", "reg3"] |
+
+\* `deletable_registration_ids` is a concatenation of `invalid_registration_ids` and `not_registered_ids`.
+There should not be duplicates but it's not guaranteed by the lib. If you don't need
+to distinguish between invalid and not registered ids you can ignore these keys and
+only use `deletable_registration_ids`.
+
+
+```elixir
+[{:ok, %{
+  status_code: 200,
+  success: 2,
+  failure: 0,
+  body: "{}",
+  canonical_ids: [],
+  invalid_registration_ids: [],
+  not_registered_ids: [],
+  headers: [{"Content-Type", "application/json; charset=UTF-8"}, …]
+}}, …]
+```
 
 See https://developers.google.com/cloud-messaging/http for more info
 
@@ -107,7 +127,7 @@ message = Map.put(GCM.Message.new, :data, %{"my-custom-key" => "Hello world!"})
 GCM.push(:app1_dev_pool, message)
 ```
 
-### Send un-supervised one-off push messages
+### Send un-supervised, one-off push messages
 
 The supervised, pooled `GCM.push\2` is probably what you want to use in your app
 but if you just want to play around with push messages from the console it can be
@@ -117,16 +137,6 @@ A successful push looks like this:
 
 ```
 iex> GCM.Sender.push("api_key", ["registration_id1", "registration_id2"], %{notification: %{title: "Hello!"}})
-{:ok, %{
-  status_code: 200,
-  success: 2,
-  failure: 0,
-  body: "{}",
-  canonical_ids: [],
-  headers: [{"Content-Type", "application/json; charset=UTF-8"}, …],
-  invalid_registration_ids: [],
-  not_registered_ids: []
-}}
 ```
 
 If the push failed the return is `{:error, reason}` where reason will include more information on what failed.

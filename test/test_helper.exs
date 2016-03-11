@@ -68,6 +68,7 @@ defmodule GCM.TestHelper do
       headers: headers,
       invalid_registration_ids: attributes[:invalid_registration_ids] || [],
       not_registered_ids: attributes[:not_registered_ids] || [],
+      deletable_registration_ids: attributes[:deletable_registration_ids] || [],
       status_code: 200
     }
 

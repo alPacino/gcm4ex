@@ -62,11 +62,11 @@ config :gcm,
 
 ### Pool keys
 
-| Pool key          | Description                                        |
-|:------------------|:---------------------------------------------------|
-| key               | GCM API key                                        |
-| pool_size         | Maximum pool size                                  |
-| pool_max_overflow | Maximum number of workers created if pool is empty |
+| Pool key          | Description                                         |
+|:------------------|:----------------------------------------------------|
+| key               | GCM API key                                         |
+| pool_size         | Maximum pool size                                   |
+| pool_max_overflow | Extra workers created if pool_size has been reached |
 
 All pools defined in config will be started automatically
 

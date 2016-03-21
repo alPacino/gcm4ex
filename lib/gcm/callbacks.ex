@@ -12,9 +12,9 @@ defmodule GCM.Callbacks.SuccessHandler do
       "\nresponse: ", inspect(response)
     ])
 
-    body[:registration_ids] |> List.wrap() |> Enum.each fn (id) ->
+    body[:registration_ids] |> List.wrap() |> Enum.each(fn (id) ->
       Logger.debug(["[GCM] sent to ", id])
-    end
+    end)
   end
 end
 
@@ -32,8 +32,8 @@ defmodule GCM.Callbacks.ErrorHandler do
       "\nreason: ", inspect(reason)
     ])
 
-    body[:registration_ids] |> List.wrap() |> Enum.each fn (id) ->
+    body[:registration_ids] |> List.wrap() |> Enum.each(fn (id) ->
       Logger.error(["[GCM] failed to send to ", id])
-    end
+    end)
   end
 end

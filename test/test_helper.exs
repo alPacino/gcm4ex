@@ -19,9 +19,9 @@ defmodule GCM.TestHelper do
       results = if body["registration_ids"] do
         body["registration_ids"]
         |> Stream.with_index
-        |> Enum.map fn ({registration_id, index}) ->
+        |> Enum.map(fn ({registration_id, index}) ->
           %{error: Enum.at(results, index)["error"], registration_id: registration_id}
-        end
+        end)
       else
         [%{error: Enum.at(results, 0)["error"], registration_id: body["to"]}]
       end

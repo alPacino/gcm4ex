@@ -17,6 +17,8 @@ defmodule GCM.Message do
     defstruct [
       title: "",
       body: "",
+      icon: nil,
+      sound: "default",
       title_loc_key: nil,
       title_loc_args: nil,
       action_loc_key: nil,

@@ -4,7 +4,7 @@ defmodule GCM.Sender do
   alias HTTPoison.Response
   require Logger
 
-  @base_url "https://fcm.googleapis.com/fcm/"
+  @base_url "https://fcm.googleapis.com/fcm"
   @url @base_url <> "/send"
   @empty_results %{not_registered_ids: [], canonical_ids: [], invalid_registration_ids: [], deletable_registration_ids: []}
   @batch_size Application.get_env(:gcm, :batch_size) || 1000
